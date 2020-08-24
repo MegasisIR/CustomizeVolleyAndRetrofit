@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">Customize Volley</string>
+    <string name="app_name">Connect To Server</string>
     <string name="addNewStudent_main">Add New Student</string>
     <string name="firstName_addNewStudentForm">First Name</string>
-    <string name="lastNAme_addNewStudentForm">Last Name</string>
+    <string name="lastName_addNewStudentForm">Last Name</string>
     <string name="score_addNewStudentForm">Score</string>
     <string name="course_addNewStudentForm">Course</string>
     <string name="saveStudent_addNewStudentForm">Save Student</string>
