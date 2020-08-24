@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -26,7 +27,7 @@ public class AddNewStudentActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_student);
-        apiService = new ApiService(this);
+        apiService = new ApiService(this,TAG);
 
         Toolbar toolbar = findViewById(R.id.toolbar_addNewStudent);
         setSupportActionBar(toolbar);
@@ -78,5 +79,11 @@ public class AddNewStudentActivity extends AppCompatActivity {
             onBackPressed();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        apiService.cancelRequest();
     }
 }

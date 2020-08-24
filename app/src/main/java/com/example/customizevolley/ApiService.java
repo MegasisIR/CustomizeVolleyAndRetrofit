@@ -1,72 +1,55 @@
 package com.example.customizevolley;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ApiService {
     private final String BASE_URL = "http://expertdevelopers.ir/api/v1/";
     private RequestQueue requestQueue;
     private static final String TAG = "ApiService";
+    private String requestTag;
+    private Gson gson;
 
-
-    public ApiService(Context context) {
+    public ApiService(Context context, String requestTag) {
+        this.requestTag = requestTag;
+        this.gson = new Gson();
         if (requestQueue == null) {
             this.requestQueue = Volley.newRequestQueue(context.getApplicationContext());
         }
     }
 
     public void getStudent(final GetListStudentsCallback callback) {
-        StringRequest request = new StringRequest(Request.Method.GET, BASE_URL + "experts/student",
-                new Response.Listener<String>() {
+        GsonRequest<List<Student>> request = new GsonRequest<>(Request.Method.GET,
+                new TypeToken<List<Student>>() {
+                }.getType(),
+                BASE_URL + "experts/student",
+                new Response.Listener<List<Student>>() {
                     @Override
-                    public void onResponse(String response) {
-                        Log.i(TAG, "onResponse: " + response);
-                        List<Student> students = new ArrayList<>();
-                        try {
-                            JSONArray jsonArray = new JSONArray(response);
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject studentObject = jsonArray.getJSONObject(i);
-                                Student student = new Student();
-                                student.setId(studentObject.getInt("id"));
-                                student.setFirstName(studentObject.getString("first_name"));
-                                student.setLastName(studentObject.getString("last_name"));
-                                student.setCourse(studentObject.getString("course"));
-                                student.setScore(studentObject.getInt("score"));
-                                students.add(student);
-                            }
-                            Log.d(TAG, "onResponse: " + students.size());
-                            callback.getStudentsSuccess(students);
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
+                    public void onResponse(List<Student> response) {
+                        callback.getStudentsSuccess(response);
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "onErrorResponse: ", error);
                 callback.getStudentError(error);
             }
-        });
+        }
+        );
+        request.setTag(requestTag);
         requestQueue.add(request);
-
     }
 
 
@@ -84,36 +67,23 @@ public class ApiService {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, BASE_URL + "experts/student",
-                studentObj, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                Log.d(TAG, "onResponse: " + response);
-                Student student = new Student();
-                try {
-                    student.setId(response.getInt("id"));
-                    student.setFirstName(response.getString("first_name"));
-                    student.setLastName(response.getString("last_name"));
-                    student.setCourse(response.getString("course"));
-                    student.setScore(response.getInt("score"));
-                    callback.onSuccess(student);
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }, new Response.ErrorListener() {
+        GsonRequest<Student> request = new GsonRequest<>(Request.Method.POST, Student.class,
+                BASE_URL + "experts/student",
+                studentObj,
+                new Response.Listener<Student>() {
+                    @Override
+                    public void onResponse(Student response) {
+                        callback.onSuccess(response);
+                    }
+                }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "onErrorResponse: ", error);
                 callback.onError(error);
             }
         });
 
         request.setRetryPolicy(new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_MAX_RETRIES));
+        request.setTag(requestTag);
         requestQueue.add(request);
     }
 
@@ -128,5 +98,9 @@ public class ApiService {
         void getStudentsSuccess(List<Student> students);
 
         void getStudentError(VolleyError error);
+    }
+
+    public void cancelRequest() {
+        requestQueue.cancelAll(requestTag);
     }
 }

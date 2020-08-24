@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        apiService = new ApiService(this);
+        apiService = new ApiService(this,TAG);
         recyclerView = findViewById(R.id.rv_main);
         progressBar = findViewById(R.id.progress_main);
 
@@ -68,5 +68,11 @@ public class MainActivity extends AppCompatActivity {
             adapter.add(student);
             recyclerView.smoothScrollToPosition(0);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        apiService.cancelRequest();
     }
 }
