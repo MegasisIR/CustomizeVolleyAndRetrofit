@@ -1,6 +1,5 @@
 <pre dir="rtl">
-کلاس ApiService قبل از شخصی ساز وافزودن کلاس GsonRequest
-به شکل زیر می باشد
+کلاس ApiService قبل از شخصی ساز وافزودن کلاس GsonRequest به شکل زیر می باشد
 </pre>
 <pre>
 public class ApiService {
@@ -132,8 +131,7 @@ public class ApiService {
 
 </pre>
 <pre dir="rtl">
-بعد از ساخت کلاس GsonRequest کلاس ApiService
-به شکل زیر تبدیل می شود
+بعد از ساخت کلاس GsonRequest کلاس ApiServiceبه شکل زیر تبدیل می شود
 </pre>
 
 <pre>
