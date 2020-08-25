@@ -4,8 +4,12 @@ import android.content.Context;
 
 import com.google.gson.JsonObject;
 
+import java.io.IOException;
 import java.util.List;
 
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -18,9 +22,22 @@ public class ApiServiceRetrofit {
     private static final String TAG = "ApiService";
 
     public ApiServiceRetrofit(Context context, String requestTag) {
+
+        OkHttpClient httpClient = new OkHttpClient.Builder()
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public okhttp3.Response intercept(Chain chain) throws IOException {
+                        Request oldRequest = chain.request();
+                        Request.Builder newRequest = oldRequest.newBuilder();
+                        newRequest.addHeader("Accept", "application/json");
+                        return chain.proceed(newRequest.build());
+                    }
+                }).build();
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
+                .client(httpClient)
                 .build();
         apiService = retrofit.create(RetrofitApiService.class);
     }
