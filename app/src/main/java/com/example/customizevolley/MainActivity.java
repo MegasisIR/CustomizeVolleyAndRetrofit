@@ -2,6 +2,7 @@ package com.example.customizevolley;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -10,9 +11,13 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.volley.VolleyError;
-
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -20,19 +25,38 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ContactAdapter adapter;
     private ProgressBar progressBar;
-    private ApiService apiService;
+    private ApiServiceVolley apiServiceVolley;
+    private final String BASE_URL = "http://expertdevelopers.ir/api/v1/";
+    private ApiServiceRetrofit apiServiceRetrofit;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        apiService = new ApiService(this,TAG);
+        apiServiceVolley = new ApiServiceVolley(this, TAG);
         recyclerView = findViewById(R.id.rv_main);
         progressBar = findViewById(R.id.progress_main);
+        apiServiceRetrofit = new ApiServiceRetrofit(this,TAG);
 
-        // add new student
+        // get All Student with Retrofit
+            apiServiceRetrofit.getStudent(new ApiServiceRetrofit.GetListStudentsCallback() {
+                @Override
+                public void getStudentsSuccess(List<Student> students) {
+                    adapter = new ContactAdapter(students);
+                    recyclerView.setAdapter(adapter);
+                    progressBar.setVisibility(View.GONE);
+                }
 
-        apiService.getStudent(new ApiService.GetListStudentsCallback() {
+                @Override
+                public void getStudentError(Throwable error) {
+                    Toast.makeText(MainActivity.this, "خطایی رخ داد", Toast.LENGTH_SHORT).show();
+                    finish();
+
+                }
+            });
+        // get All Student with Volley
+       /* apiServiceVolley.getStudent(new ApiServiceVolley.GetListStudentsCallback() {
             @Override
             public void getStudentsSuccess(List<Student> students) {
                 adapter = new ContactAdapter(students);
@@ -44,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
             public void getStudentError(VolleyError error) {
                 Toast.makeText(MainActivity.this, "خطایی رخ داد", Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
 
         View fabAddStudent = findViewById(R.id.fab_main_addNewStudent);
         fabAddStudent.setOnClickListener(new View.OnClickListener() {
@@ -73,6 +97,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        apiService.cancelRequest();
+        apiServiceVolley.cancelRequest();
     }
 }

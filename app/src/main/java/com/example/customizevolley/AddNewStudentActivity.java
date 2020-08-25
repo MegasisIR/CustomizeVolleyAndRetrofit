@@ -2,6 +2,7 @@ package com.example.customizevolley;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -9,8 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.android.volley.Request;
-import com.android.volley.VolleyError;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class AddNewStudentActivity extends AppCompatActivity {
@@ -21,14 +20,15 @@ public class AddNewStudentActivity extends AppCompatActivity {
     private TextInputEditText scoreEt;
     private TextInputEditText courseEt;
 
-    private ApiService apiService;
+    private ApiServiceVolley apiServiceVolley;
+    private ApiServiceRetrofit apiServiceRetrofit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_student);
-        apiService = new ApiService(this,TAG);
-
+        apiServiceVolley = new ApiServiceVolley(this, TAG);
+        apiServiceRetrofit = new ApiServiceRetrofit(this, TAG);
         Toolbar toolbar = findViewById(R.id.toolbar_addNewStudent);
         setSupportActionBar(toolbar);
 
@@ -50,10 +50,32 @@ public class AddNewStudentActivity extends AppCompatActivity {
                         && lastNameEt.length() > 0
                         && scoreEt.length() > 0
                         && courseEt.length() > 0) {
-                    apiService.saveStudent(firstNameEt.getText().toString(),
+
+                    //Save Student with Retrofit
+                    apiServiceRetrofit.saveStudent(
+                            firstNameEt.getText().toString(),
                             lastNameEt.getText().toString(),
                             Integer.parseInt(scoreEt.getText().toString()),
-                            courseEt.getText().toString(), new ApiService.SaveStudentCallback() {
+                            courseEt.getText().toString(), new ApiServiceRetrofit.SaveStudentCallback() {
+                                @Override
+                                public void onSuccess(Student student) {
+                                    Intent intent = new Intent();
+                                    intent.putExtra("student", student);
+                                    setResult(MainActivity.RESULT_OK, intent);
+                                    finish();
+                                }
+
+                                @Override
+                                public void onError(Throwable error) {
+                                    Log.e(TAG, "onError: ", error);
+                                }
+                            });
+
+                    //Save Student with Volley
+                   /* apiServiceVolley.saveStudent(firstNameEt.getText().toString(),
+                            lastNameEt.getText().toString(),
+                            Integer.parseInt(scoreEt.getText().toString()),
+                            courseEt.getText().toString(), new ApiServiceVolley.SaveStudentCallback() {
                                 @Override
                                 public void onSuccess(Student student) {
                                     Intent intent = new Intent();
@@ -66,7 +88,7 @@ public class AddNewStudentActivity extends AppCompatActivity {
                                 public void onError(VolleyError error) {
 
                                 }
-                            });
+                            });*/
 
                 }
             }
@@ -84,6 +106,6 @@ public class AddNewStudentActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        apiService.cancelRequest();
+       // apiServiceVolley.cancelRequest();
     }
 }

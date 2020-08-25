@@ -16,14 +16,14 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-public class ApiService {
+public class ApiServiceVolley {
     private final String BASE_URL = "http://expertdevelopers.ir/api/v1/";
     private RequestQueue requestQueue;
     private static final String TAG = "ApiService";
     private String requestTag;
     private Gson gson;
 
-    public ApiService(Context context, String requestTag) {
+    public ApiServiceVolley(Context context, String requestTag) {
         this.requestTag = requestTag;
         this.gson = new Gson();
         if (requestQueue == null) {
