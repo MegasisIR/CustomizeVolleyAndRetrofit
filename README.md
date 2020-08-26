@@ -1,9 +1,9 @@
 <pre dir="rtl"> تصاویر </pre>
 <div style="margin:0 auto;padding:15px;display:inline-block" dir="rtl" >
- <img src="https://github.com/MehrdadTabesh/CustomizeVolleyAndRetrofit/blob/master/screenshots/screenshot-2020-08-25_00.38.19.564.png" alt="drawing" width="400px" height="800px" style="max-width:100%;float: right;" margin="20px">
+ <img src="https://github.com/MehrdadTabesh/CustomizeVolleyAndRetrofit/blob/master/screenshots/screenshot-2020-08-25_00.38.19.564.png" alt="drawing" width="400px" height="800px" style="max-width:100%;float: right;" margin="40px">
  
  
- <img src="https://github.com/MehrdadTabesh/CustomizeVolleyAndRetrofit/blob/master/screenshots/screenshot-2020-08-25_00.39.25.01.png" style="float:right" alt="drawing" width="400px" height="800px"  margin="20px"/>
+ <img src="https://github.com/MehrdadTabesh/CustomizeVolleyAndRetrofit/blob/master/screenshots/screenshot-2020-08-25_00.39.25.01.png" style="float:right" alt="drawing" width="400px" height="800px"  margin="40px"/>
 </div>
 
 <pre dir="rtl">
